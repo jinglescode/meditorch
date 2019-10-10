@@ -12,7 +12,7 @@ with open('LICENSE') as f:
 setup(
     name='meditorch',
     version='0.0.1',
-    description='Torch package for biomedical image processing',
+    description='A PyTorch package for biomedical image processing',
     long_description=readme,
     author='Jingles',
     author_email='jinglescode@gmail.com',
