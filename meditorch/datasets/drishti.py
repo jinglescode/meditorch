@@ -62,7 +62,7 @@ class Drishti(Dataset):
 
         # doing this so that it is consistent with all other datasets
         # to return a PIL Image
-        img = Image.fromarray(img)
+        # img = Image.fromarray(img)
 
         return img, target
 
@@ -74,7 +74,7 @@ class Drishti(Dataset):
         # file_codes_all = []
 
         if is_train:
-            set_path = os.path.join(self.extracted_folder, 'Training')
+            set_path = os.path.join(self.extracted_folder, 'Training_tiny')
         else:
             set_path = os.path.join(self.extracted_folder, 'Test')
 
