@@ -10,7 +10,7 @@ with open("requirements.txt", "r") as fh:
 
 setuptools.setup(
     name="meditorch",
-    version="0.0.dev12",
+    version="0.0.dev15",
     author="Jingles",
     author_email="jinglescode@gmail.com",
     description="A PyTorch package for biomedical image processing",
@@ -31,6 +31,7 @@ setuptools.setup(
     },
     install_requires=install_requires
 )
+
 
 
 # from setuptools import setup, find_packages

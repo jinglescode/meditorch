@@ -1,7 +1,7 @@
 import os
 import numpy as np
-from PIL import Image
 from torch.utils.data import Dataset
+from torchvision import transforms
 
 from meditorch.utils.files import makedir_exist_ok, download_and_extract_archive
 from .utils_image import load_set, load_image, resize_image_to_square
@@ -56,13 +56,14 @@ class Drishti(Dataset):
         Args:
             index (int): Index
         Returns:
-            tuple: (image, target) where target is index of the target class.
+            tuple: (image, target) where target is mask.
         """
         img, target = self.data[index], self.targets[index]
 
-        # doing this so that it is consistent with all other datasets
-        # to return a PIL Image
-        # img = Image.fromarray(img)
+        trans = transforms.Compose([
+            transforms.ToTensor(),
+        ])
+        img = trans(img)
 
         return img, target
 
@@ -74,7 +75,7 @@ class Drishti(Dataset):
         # file_codes_all = []
 
         if is_train:
-            set_path = os.path.join(self.extracted_folder, 'Training')
+            set_path = os.path.join(self.extracted_folder, 'Training_tiny')
         else:
             set_path = os.path.join(self.extracted_folder, 'Test')
 
