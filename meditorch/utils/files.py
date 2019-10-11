@@ -5,6 +5,7 @@ import gzip
 import errno
 import tarfile
 import zipfile
+import patoolib
 
 import torch
 from torch.utils.model_zoo import tqdm
@@ -197,22 +198,20 @@ def _save_response_content(response, destination, chunk_size=32768):
 def _is_tarxz(filename):
     return filename.endswith(".tar.xz")
 
-
 def _is_tar(filename):
     return filename.endswith(".tar")
-
 
 def _is_targz(filename):
     return filename.endswith(".tar.gz")
 
-
 def _is_gzip(filename):
     return filename.endswith(".gz") and not filename.endswith(".tar.gz")
-
 
 def _is_zip(filename):
     return filename.endswith(".zip")
 
+def _is_rar(filename):
+    return filename.endswith(".rar")
 
 def extract_archive(from_path, to_path=None, remove_finished=False):
     if to_path is None:
@@ -235,6 +234,9 @@ def extract_archive(from_path, to_path=None, remove_finished=False):
     elif _is_zip(from_path):
         with zipfile.ZipFile(from_path, 'r') as z:
             z.extractall(to_path)
+    elif _is_rar(from_path):
+        patoolib.extract_archive(from_path, outdir=to_path)
+
     else:
         raise ValueError("Extraction of {} not supported".format(from_path))
 

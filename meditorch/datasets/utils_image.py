@@ -4,9 +4,6 @@ import numpy as np
 from PIL import Image
 from skimage.transform import resize
 
-class UtilsImageException(Exception):
-    pass
-
 def load_image(path):
     # returns an image of dtype int in range [0, 255]
     return np.asarray(Image.open(path))
@@ -59,7 +56,7 @@ def resize_image_to_square(img, side, pad_cval=0, dtype=np.float64):
             r = l + h
             padded[l:r, :, :] = img.copy()
     else:
-        raise UtilsImageException('only images of 2d and 3d shape are accepted')
+        raise Exception('only images of 2d and 3d shape are accepted')
 
     resized_img = resize(padded, output_shape=(side, side))
 

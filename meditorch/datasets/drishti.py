@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset
 
-from utils.files import makedir_exist_ok, download_and_extract_archive
+from meditorch.utils.files import makedir_exist_ok, download_and_extract_archive
 from .utils_image import load_set, load_image, resize_image_to_square
 
 class Drishti(Dataset):
@@ -74,14 +74,17 @@ class Drishti(Dataset):
         # file_codes_all = []
 
         if is_train:
-            set_path = os.path.join(self.extracted_folder, 'Training_tiny')
+            set_path = os.path.join(self.extracted_folder, 'Training')
         else:
             set_path = os.path.join(self.extracted_folder, 'Test')
 
-        print(set_path)
+        print('Extracting data from', set_path)
 
         images_path = os.path.join(set_path, 'Images')
         X_all, file_names = load_set(folder=images_path)
+
+        if len(file_names) == 0:
+            raise Exception('No files')
 
         rel_file_names = [os.path.split(fn)[-1] for fn in file_names]
         rel_file_names_wo_ext = [fn[:fn.rfind('.')] for fn in rel_file_names]
@@ -138,6 +141,8 @@ class Drishti(Dataset):
         self.data = input_images
         self.targets = target_masks
 
+        print('Completed extracting `data` and `targets`.')
+
     @property
     def data_folder(self):
         return os.path.join(self.root, self.__class__.__name__)
@@ -156,7 +161,7 @@ class Drishti(Dataset):
 
         makedir_exist_ok(self.data_folder)
 
-        urls = ['https://cdn-17.anonfile.com/9014ce8bn7/b0199dfb-1570682722/Drishti-GS1_files.zip']
+        urls = ['https://cvit.iiit.ac.in/projects/mip/drishti-gs/mip-dataset2/Drishti-GS1_files.rar']
 
         for url in urls:
             filename = url.rpartition('/')[2]
