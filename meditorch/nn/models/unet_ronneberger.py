@@ -37,7 +37,7 @@ class UpConv(nn.Module):
         return x
 
 
-class Unet(nn.Module):
+class UnetRonneberger(nn.Module):
     """A reference U-Net model.
 
     .. seealso::
@@ -46,7 +46,7 @@ class Unet(nn.Module):
         ArXiv link: https://arxiv.org/abs/1505.04597
     """
     def __init__(self, in_channel, n_classes, drop_rate=0.4, bn_momentum=0.1):
-        super(Unet, self).__init__()
+        super(UnetRonneberger, self).__init__()
 
         #Downsampling path
         self.conv1 = DownConv(in_channel, 64, drop_rate, bn_momentum)
@@ -87,6 +87,6 @@ class Unet(nn.Module):
         x10 = self.up3(x9, x1)
 
         x11 = self.conv9(x10)
-        preds = torch.sigmoid(x11)
+        preds = F.sigmoid(x11)
 
         return preds
