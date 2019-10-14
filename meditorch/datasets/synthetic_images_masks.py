@@ -5,9 +5,9 @@ from torchvision import transforms
 
 class SyntheticImagesMasks(Dataset):
 
-    def __init__(self, num_shapes=6, size=200, result_resolution=(224,224)):
+    def __init__(self, size=200, transform=None, result_resolution=(224,224)):
 
-        self.num_shapes = num_shapes
+        self.transform = transform
 
         self.data, self.targets = self.generate_random_data(result_resolution[0], result_resolution[1], size)
 
@@ -20,10 +20,13 @@ class SyntheticImagesMasks(Dataset):
         """
         img, target = self.data[index], self.targets[index]
 
-        trans = transforms.Compose([
-            transforms.ToTensor(),
-        ])
-        img = trans(img)
+        if self.transform:
+            img = self.transform(img)
+        else:
+            transform_to_tensor = transforms.Compose([
+                transforms.ToTensor(),
+            ])
+            img = transform_to_tensor(img)
 
         return img, target
 

@@ -10,7 +10,7 @@ with open("requirements.txt", "r") as fh:
 
 setuptools.setup(
     name="meditorch",
-    version="0.0.dev17",
+    version="0.0.dev20",
     author="Jingles",
     author_email="jinglescode@gmail.com",
     description="A PyTorch package for biomedical image processing",
@@ -23,7 +23,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.5',
+    python_requires='>=3.3',
     project_urls={
         'Documentation': 'https://meditorch.readthedocs.io',
         'Source': 'https://github.com/jinglescode/meditorch',

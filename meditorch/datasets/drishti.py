@@ -4,7 +4,7 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 from meditorch.utils.files import makedir_exist_ok, download_and_extract_archive
-from .utils_image import load_set, load_image, resize_image_to_square
+from meditorch.utils.images import load_set, load_image, resize_image_to_square
 
 class Drishti(Dataset):
 
@@ -40,9 +40,10 @@ class Drishti(Dataset):
         result_resolution (tuple, optional): ``data`` and ``targets`` will be resized to this resolution. (default: (224,224))
     """
 
-    def __init__(self, root, train=True, return_disc=True, return_cup=True, result_resolution=(224,224)):
+    def __init__(self, root, train=True, transform=None, return_disc=True, return_cup=True, result_resolution=(224,224)):
 
         self.root = root
+        self.transform = transform
 
         self.data = None
         self.targets = None
@@ -60,10 +61,13 @@ class Drishti(Dataset):
         """
         img, target = self.data[index], self.targets[index]
 
-        trans = transforms.Compose([
-            transforms.ToTensor(),
-        ])
-        img = trans(img)
+        if self.transform:
+            img = self.transform(img)
+        else:
+            transform_to_tensor = transforms.Compose([
+                transforms.ToTensor(),
+            ])
+            img = transform_to_tensor(img)
 
         return img, target
 

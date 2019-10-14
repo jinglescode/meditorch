@@ -14,6 +14,7 @@ def load_set(folder, shuffle=False):
                       glob.glob(os.path.join(folder, '*.jpeg')))
     if shuffle:
         np.random.shuffle(img_list)
+
     data = []
     filenames = []
     for img_fn in img_list:
