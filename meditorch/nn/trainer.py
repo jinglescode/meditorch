@@ -3,9 +3,6 @@ import copy
 import time
 
 import torch
-import torch.nn.functional as F
-import torch.optim as optim
-from torch.optim import lr_scheduler
 
 from .loss import dice_loss
 from meditorch.utils.plot import metrics_line
@@ -22,17 +19,20 @@ class Trainer(object):
 
         self.optimizer = optimizer
         if self.optimizer == None:
-            self.optimizer = optim.Adam(self.model.parameters(), lr=1e-4)
+            self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
 
         self.scheduler = scheduler
         if self.scheduler == None:
-            self.scheduler = lr_scheduler.StepLR(self.optimizer, step_size=5, gamma=0.1)
+            self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=5, gamma=0.1)
 
 
     def train_model(self, dataloaders, num_epochs=25):
         best_model_wts = copy.deepcopy(self.model.state_dict())
         best_loss = 1e10
-        epochs_metrics = []
+        epochs_metrics = {
+            'train': [],
+            'val': []
+        }
 
         for epoch in range(num_epochs):
             print('Epoch {}/{}:'.format(epoch+1, num_epochs))
@@ -43,7 +43,7 @@ class Trainer(object):
             for phase in ['train', 'val']:
                 if phase == 'train':
                     for param_group in self.optimizer.param_groups:
-                        print("LR: {}".format(param_group['lr']))
+                        print("\tLR: {}".format(param_group['lr']))
 
                     self.model.train()  # Set model to training mode
                 else:
@@ -75,20 +75,20 @@ class Trainer(object):
 
                 computed_metrics = compute_metrics(metrics, epoch_samples)
                 print_metrics(computed_metrics, phase)
-                epochs_metrics.append(computed_metrics)
+                epochs_metrics[phase].append(computed_metrics)
                 epoch_loss = metrics['loss'] / epoch_samples
-
-                # deep copy the model
-                if phase == 'val' and epoch_loss < best_loss:
-                    print("Saving best model, epoch loss {} < best loss {}".format(epoch_loss, best_loss))
-                    best_loss = epoch_loss
-                    best_model_wts = copy.deepcopy(self.model.state_dict())
 
                 if phase == 'train':
                     self.scheduler.step()
 
+                # deep copy the model
+                if phase == 'val' and epoch_loss < best_loss:
+                    print("\tSaving best model, epoch loss {} < best loss {}".format(epoch_loss, best_loss))
+                    best_loss = epoch_loss
+                    best_model_wts = copy.deepcopy(self.model.state_dict())
+
             time_elapsed = time.time() - since
-            print('{:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
+            print('\t{:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
             print('-' * 10)
 
         print('Best val loss: {:4f}'.format(best_loss))
@@ -99,18 +99,18 @@ class Trainer(object):
         metrics_line(epochs_metrics)
 
 def calc_loss(pred, target, metrics, bce_weight=0.5):
-        bce = F.binary_cross_entropy_with_logits(pred, target)
+    bce = torch.nn.functional.binary_cross_entropy_with_logits(pred, target)
 
-        pred = torch.sigmoid(pred)
-        dice = dice_loss(pred, target)
+    pred = torch.sigmoid(pred)
+    dice = dice_loss(pred, target)
 
-        loss = bce * bce_weight + dice * (1 - bce_weight)
+    loss = bce * bce_weight + dice * (1 - bce_weight)
 
-        metrics['bce'] += bce.data.cpu().numpy() * target.size(0)
-        metrics['dice'] += dice.data.cpu().numpy() * target.size(0)
-        metrics['loss'] += loss.data.cpu().numpy() * target.size(0)
+    metrics['bce'] += bce.data.cpu().numpy() * target.size(0)
+    metrics['dice'] += dice.data.cpu().numpy() * target.size(0)
+    metrics['loss'] += loss.data.cpu().numpy() * target.size(0)
 
-        return loss
+    return loss
 
 def compute_metrics(metrics, epoch_samples):
     computed_metrics = {}
@@ -123,5 +123,5 @@ def print_metrics(computed_metrics, phase):
     for k in computed_metrics.keys():
         outputs.append("{}: {:4f}".format(k, computed_metrics[k]))
 
-    print("{}: {}".format(phase, ", ".join(outputs)))
+    print("\t{}-> {}".format(phase, ", ".join(outputs)))
 
