@@ -98,6 +98,12 @@ class Trainer(object):
 
         metrics_line(epochs_metrics)
 
+    def predict(self, X):
+        inputs = X.to(self.device)
+        pred = self.model(inputs)
+        return pred.data.cpu().numpy()
+
+
 def calc_loss(pred, target, metrics, bce_weight=0.5):
     bce = torch.nn.functional.binary_cross_entropy_with_logits(pred, target)
 

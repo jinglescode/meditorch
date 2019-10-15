@@ -79,7 +79,7 @@ class Drishti(Dataset):
         # file_codes_all = []
 
         if is_train:
-            set_path = os.path.join(self.extracted_folder, 'Training_tiny')
+            set_path = os.path.join(self.extracted_folder, 'Training')
         else:
             set_path = os.path.join(self.extracted_folder, 'Test')
 
