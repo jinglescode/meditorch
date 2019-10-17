@@ -4,8 +4,8 @@ import time
 
 import torch
 
-from .loss import dice_loss
-from meditorch.utils.plot import metrics_line
+from .metrics import dice_loss, intersection_over_union
+from meditorch.utils.plot import metrics_line, normalise_mask
 
 class Trainer(object):
 
@@ -98,10 +98,16 @@ class Trainer(object):
 
         metrics_line(epochs_metrics)
 
-    def predict(self, X):
+    def predict(self, X, threshold=0.5):
+        self.model.eval()
         inputs = X.to(self.device)
         pred = self.model(inputs)
-        return pred.data.cpu().numpy()
+
+        pred = pred.data.cpu().numpy()
+
+        pred = normalise_mask(pred, threshold)
+
+        return pred
 
 
 def calc_loss(pred, target, metrics, bce_weight=0.5):
@@ -110,10 +116,14 @@ def calc_loss(pred, target, metrics, bce_weight=0.5):
     pred = torch.sigmoid(pred)
     dice = dice_loss(pred, target)
 
+    pred_binary = normalise_mask(pred.detach().cpu().numpy())
+    iou = intersection_over_union(target.detach().cpu().numpy(), pred_binary)
+
     loss = bce * bce_weight + dice * (1 - bce_weight)
 
     metrics['bce'] += bce.data.cpu().numpy() * target.size(0)
     metrics['dice'] += dice.data.cpu().numpy() * target.size(0)
+    metrics['iou'] += iou * target.size(0)
     metrics['loss'] += loss.data.cpu().numpy() * target.size(0)
 
     return loss
@@ -127,7 +137,6 @@ def compute_metrics(metrics, epoch_samples):
 def print_metrics(computed_metrics, phase):
     outputs = []
     for k in computed_metrics.keys():
-        outputs.append("{}: {:4f}".format(k, computed_metrics[k]))
+        outputs.append("{}:{:4f}".format(k, computed_metrics[k]))
 
-    print("\t{}-> {}".format(phase, ", ".join(outputs)))
-
+    print("\t{}-> {}".format(phase, "|".join(outputs)))
