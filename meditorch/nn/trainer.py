@@ -43,7 +43,7 @@ class Trainer(object):
             for phase in ['train', 'val']:
                 if phase == 'train':
                     for param_group in self.optimizer.param_groups:
-                        print("\tLR: {}".format(param_group['lr']))
+                        print("\tlearning rate: {:4f}".format(param_group['lr']))
 
                     self.model.train()  # Set model to training mode
                 else:
@@ -83,7 +83,7 @@ class Trainer(object):
 
                 # deep copy the model
                 if phase == 'val' and epoch_loss < best_loss:
-                    print("\tSaving best model, epoch loss {} < best loss {}".format(epoch_loss, best_loss))
+                    print("\tSaving best model, epoch loss {:4f} < best loss {:4f}".format(epoch_loss, best_loss))
                     best_loss = epoch_loss
                     best_model_wts = copy.deepcopy(self.model.state_dict())
 
