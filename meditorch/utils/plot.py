@@ -55,7 +55,6 @@ def apply_mask_color(mask, mask_color):
     colored_mask = np.concatenate(([mask[ ... , np.newaxis] * color for color in mask_color]), axis=2)
     return colored_mask.astype(np.uint8)
 
-
 def masks_to_coloredmasks(mask, normalise=True, colors=None):
     segments_colors = np.asarray([(201, 58, 64), (242, 207, 1), (0, 152, 75), (101, 172, 228),(56, 34, 132), (160, 194, 56)])
     if colors is not None:
@@ -64,11 +63,10 @@ def masks_to_coloredmasks(mask, normalise=True, colors=None):
     if normalise:
         normalise_mask(mask)
 
-    colored = np.concatenate( [ [apply_mask_color(mask[i], segments_colors[i])] for i in range(len(mask)) ] )
-    colored = np.max(colored, axis=0)
+    mask_colored = np.concatenate( [ [apply_mask_color(mask[i], segments_colors[i])] for i in range(len(mask)) ] )
+    mask_colored = np.max(mask_colored, axis=0)
 
-    white_bg = np.ones((mask.shape[1], mask.shape[2], 3), dtype=np.float32) * 255
-    white_bg = white_bg.astype(np.uint8)
+    mask_colored = np.where(mask_colored.any(-1,keepdims=True),mask_colored,255)
 
-    return white_bg - colored
+    return mask_colored
 

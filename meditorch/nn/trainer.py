@@ -43,7 +43,7 @@ class Trainer(object):
             for phase in ['train', 'val']:
                 if phase == 'train':
                     for param_group in self.optimizer.param_groups:
-                        print("\tlearning rate: {:4f}".format(param_group['lr']))
+                        print("\tlearning rate: {:.2e}".format(param_group['lr']))
 
                     self.model.train()  # Set model to training mode
                 else:
@@ -139,4 +139,4 @@ def print_metrics(computed_metrics, phase):
     for k in computed_metrics.keys():
         outputs.append("{}:{:4f}".format(k, computed_metrics[k]))
 
-    print("\t{}-> {}".format(phase, "|".join(outputs)))
+    print("\t{}-> {}".format(phase.ljust(5), "|".join(outputs)))
