@@ -9,7 +9,7 @@ def convrelu(in_channels, out_channels, kernel, padding):
     )
 
 
-class UNetResNet(nn.Module):
+class ResNet18(nn.Module):
 
     def __init__(self, in_channel, n_classes):
         super().__init__()

@@ -45,10 +45,10 @@ class BottomConv(nn.Module):
 
 
 
-class UnetSevastopolsky(nn.Module):
+class Sevastopolsky(nn.Module):
 
     def __init__(self, in_channel, n_classes, drop_rate=0.4):
-        super(UnetSevastopolsky, self).__init__()
+        super(Sevastopolsky, self).__init__()
 
         self.conv1 = DownConv(in_channel, 32, drop_rate)
         self.conv2 = DownConv(32, 64, drop_rate)
