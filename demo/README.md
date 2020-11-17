@@ -1,5 +1,5 @@
-# Demo
+# Demos
 
-[ResNet18 U-Net, optic disc and cup segmentation, Drishti dataset](https://colab.research.google.com/github/jinglescode/meditorch/blob/master/demo/unet_resnet_drishti_segmentation.ipynb)
-
-[ResNet18 U-Net, synthetic shapes segmentation](https://colab.research.google.com/github/jinglescode/meditorch/blob/master/demo/unet_resnet_synthetic_images_segmentation.ipynb)
+- [Drishti dataset, visualize segmentations results with various U-Net based models](https://github.com/jinglescode/meditorch/blob/master/demo/Drishti-visualize-results.ipynb)
+- [Drishti dataset, compares performance with various U-Net based models](https://github.com/jinglescode/meditorch/blob/master/demo/Drishti-compare-unet-atten_unet-nested_unet-30runs.ipynb)
+- [DSB2018 dataset, compares performance with various segmentation models](https://github.com/jinglescode/meditorch/blob/master/demo/Nucleus-compare.ipynb)

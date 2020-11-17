@@ -13,7 +13,7 @@ setuptools.setup(
     version="0.0.3",
     author="Jingles",
     author_email="jinglescode@gmail.com",
-    description="A PyTorch package for biomedical image processing",
+    description="A PyTorch package for biomedical data processing",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/jinglescode/meditorch",
